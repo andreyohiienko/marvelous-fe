@@ -4,7 +4,7 @@ import { useAddNewListItemMutation } from "mutations";
 
 export const AddNewTodo = () => {
   const [description, setDescription] = useState("");
-  const { mutate } = useAddNewListItemMutation({
+  const { mutate, isLoading } = useAddNewListItemMutation({
     onSuccess() {
       setDescription("");
     },
@@ -24,7 +24,7 @@ export const AddNewTodo = () => {
       />
       <Button
         type="submit"
-        disabled={!description}
+        disabled={!description || isLoading}
         sx={{ ml: 2, px: 4 }}
         variant="contained"
       >
