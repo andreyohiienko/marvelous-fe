@@ -13,7 +13,7 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
-import { useTodoListQuery } from "../queries";
+import { useTodoListQuery } from "queries";
 
 export const Main = () => {
   const { data, isLoading } = useTodoListQuery();
