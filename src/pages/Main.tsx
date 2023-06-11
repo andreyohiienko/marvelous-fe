@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Typography,
-  Button,
   TextField,
   FormControl,
   Checkbox,
@@ -13,7 +12,7 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
-import { AddNewTodo } from "components";
+import { AddNewTodo, DeleteAll } from "components";
 import { useTodoListQuery } from "queries";
 
 export const Main = () => {
@@ -70,9 +69,7 @@ export const Main = () => {
           </Typography>
         </Grid>
         <Grid item xs textAlign="right">
-          <Button variant="text" sx={{ textDecoration: "underline" }}>
-            Delete all tasks
-          </Button>
+          <DeleteAll />
         </Grid>
       </Grid>
 

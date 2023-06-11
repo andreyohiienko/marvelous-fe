@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  UseMutationOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { api } from "api";
 import { AxiosError } from "axios";
 
@@ -16,7 +20,7 @@ type TodoListItem = {
 
 export const useAddNewListItemMutation = () => {
   const queryClient = useQueryClient();
-  return useMutation<TodoListItem, AxiosError, Params>(
+  return useMutation<TodoListItem, AxiosError, Params, TodoListItem[]>(
     async (params: Params) => {
       const { data } = await api.post("/todo-list", { ...params });
       return data;
@@ -25,7 +29,9 @@ export const useAddNewListItemMutation = () => {
       onMutate: async (newTodo) => {
         await queryClient.cancelQueries({ queryKey: ["todo-list"] });
 
-        const previousTodos = queryClient.getQueryData(["todo-list"]);
+        const previousTodos = queryClient.getQueryData<TodoListItem[]>([
+          "todo-list",
+        ]);
         queryClient.setQueryData<TodoListItem[]>(["todo-list"], (old) =>
           [
             ...(old || []),
@@ -37,14 +43,37 @@ export const useAddNewListItemMutation = () => {
       },
       onError: (_err, _variables, context) => {
         if (context)
-          queryClient.setQueryData<TodoListItem[]>(
-            ["todo-list"],
-            context as TodoListItem[]
-          );
+          queryClient.setQueryData<TodoListItem[]>(["todo-list"], context);
       },
       // onSettled: () => {
       //   queryClient.invalidateQueries({ queryKey: ["todo-list"] });
       // },
+    }
+  );
+};
+
+export const useDeleteAllTodosMutation = (
+  options?: UseMutationOptions<TodoListItem[], AxiosError, void, TodoListItem[]>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<TodoListItem[], AxiosError, void, TodoListItem[]>(
+    async () => {
+      const { data } = await api.delete("/todo-list/all");
+      return data;
+    },
+    {
+      onMutate: () => {
+        const previousTodos = queryClient.getQueryData<TodoListItem[]>([
+          "todo-list",
+        ]);
+        queryClient.setQueryData<TodoListItem[]>(["todo-list"], () => []);
+        return previousTodos;
+      },
+      onError: (_err, _variables, context) => {
+        queryClient.setQueryData<TodoListItem[]>(["todo-list"], context);
+      },
+      ...options,
     }
   );
 };
