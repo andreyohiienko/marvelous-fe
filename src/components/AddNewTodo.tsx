@@ -4,7 +4,11 @@ import { useAddNewListItemMutation } from "mutations";
 
 export const AddNewTodo = () => {
   const [description, setDescription] = useState("");
-  const { mutate } = useAddNewListItemMutation();
+  const { mutate } = useAddNewListItemMutation({
+    onSuccess() {
+      setDescription("");
+    },
+  });
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

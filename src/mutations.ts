@@ -18,9 +18,16 @@ type TodoListItem = {
   createdAt?: string;
 };
 
-export const useAddNewListItemMutation = () => {
+export const useAddNewListItemMutation = (
+  options?: UseMutationOptions<
+    TodoListItem[],
+    AxiosError,
+    Params,
+    TodoListItem[]
+  >
+) => {
   const queryClient = useQueryClient();
-  return useMutation<TodoListItem, AxiosError, Params, TodoListItem[]>(
+  return useMutation<TodoListItem[], AxiosError, Params, TodoListItem[]>(
     async (params: Params) => {
       const { data } = await api.post("/todo-list", { ...params });
       return data;
@@ -48,6 +55,7 @@ export const useAddNewListItemMutation = () => {
       // onSettled: () => {
       //   queryClient.invalidateQueries({ queryKey: ["todo-list"] });
       // },
+      ...options,
     }
   );
 };
