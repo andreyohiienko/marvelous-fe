@@ -11,25 +11,22 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  CircularProgress,
 } from "@mui/material";
 import { useTodoListQuery } from "../queries";
 
 export const Main = () => {
-  const { data } = useTodoListQuery();
-  return (
-    <Container>
-      <Grid container spacing={2} mt={2}>
-        <Grid item xs>
-          <Typography variant="h4" component="h1">
-            Marvelous
-          </Typography>
-        </Grid>
-        <Grid item xs textAlign="right">
-          <Button variant="text" sx={{ textDecoration: "underline" }}>
-            Delete all tasks
-          </Button>
-        </Grid>
-      </Grid>
+  const { data, isLoading } = useTodoListQuery();
+
+  const render = () => {
+    if (isLoading)
+      return (
+        <Box textAlign="center">
+          <CircularProgress />
+        </Box>
+      );
+
+    return (
       <Grid container spacing={2} mt={4}>
         <Grid item md xs={12}>
           <Box display="flex">
@@ -65,6 +62,25 @@ export const Main = () => {
           </List>
         </Grid>
       </Grid>
+    );
+  };
+
+  return (
+    <Container>
+      <Grid container spacing={2} mt={2}>
+        <Grid item xs>
+          <Typography variant="h4" component="h1">
+            Marvelous
+          </Typography>
+        </Grid>
+        <Grid item xs textAlign="right">
+          <Button variant="text" sx={{ textDecoration: "underline" }}>
+            Delete all tasks
+          </Button>
+        </Grid>
+      </Grid>
+
+      {render()}
     </Container>
   );
 };
