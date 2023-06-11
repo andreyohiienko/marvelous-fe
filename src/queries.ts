@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { UseQueryOptions, useQuery } from "@tanstack/react-query";
 import { api } from "api";
 import { AxiosError } from "axios";
 
@@ -10,8 +10,23 @@ type TodoListItem = {
   updatedAt: string;
 };
 
-export const useTodoListQuery = () =>
-  useQuery<TodoListItem[], AxiosError>(["todo-list"], async ({ signal }) => {
-    const { data } = await api.get("/todo-list", { signal });
-    return data;
-  });
+export const useTodoListQuery = (
+  options?: { status: "done" | "undone" } & UseQueryOptions<
+    TodoListItem[],
+    AxiosError,
+    TodoListItem[]
+  >
+) => {
+  const { status, ...rest } = options || {};
+  return useQuery<TodoListItem[], AxiosError, TodoListItem[]>(
+    ["todo-list-" + status],
+    async ({ signal }) => {
+      const { data } = await api.get("/todo-list", {
+        signal,
+        params: { status },
+      });
+      return data;
+    },
+    { ...rest }
+  );
+};

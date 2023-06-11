@@ -16,7 +16,10 @@ import { AddNewTodo, DeleteAll } from "components";
 import { useTodoListQuery } from "queries";
 
 export const Main = () => {
-  const { data, isLoading } = useTodoListQuery();
+  const { data, isLoading } = useTodoListQuery({ status: "undone" });
+  const { data: dataDone, isLoading: isLoadingDone } = useTodoListQuery({
+    status: "done",
+  });
 
   const render = () => {
     if (isLoading)
@@ -46,7 +49,7 @@ export const Main = () => {
             <TextField label="Search..." />
           </FormControl>
           <List>
-            {data?.map(({ id, description, status }) => (
+            {dataDone?.map(({ id, description, status }) => (
               <ListItemButton key={id}>
                 <ListItemIcon>
                   <Checkbox checked={status} disableRipple />
