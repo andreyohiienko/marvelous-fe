@@ -26,10 +26,12 @@ export const useAddNewListItemMutation = () => {
         await queryClient.cancelQueries({ queryKey: ["todo-list"] });
 
         const previousTodos = queryClient.getQueryData(["todo-list"]);
-        queryClient.setQueryData<TodoListItem[]>(["todo-list"], (old) => [
-          ...(old || []),
-          { id: Math.random(), status: false, ...newTodo },
-        ]);
+        queryClient.setQueryData<TodoListItem[]>(["todo-list"], (old) =>
+          [
+            ...(old || []),
+            { id: Math.random(), status: false, ...newTodo },
+          ].sort((a, b) => a.description?.localeCompare(b.description))
+        );
 
         return previousTodos;
       },
@@ -40,9 +42,9 @@ export const useAddNewListItemMutation = () => {
             context as TodoListItem[]
           );
       },
-      onSettled: () => {
-        queryClient.invalidateQueries({ queryKey: ["todo-list"] });
-      },
+      // onSettled: () => {
+      //   queryClient.invalidateQueries({ queryKey: ["todo-list"] });
+      // },
     }
   );
 };
