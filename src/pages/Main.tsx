@@ -13,6 +13,7 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
+import { AddNewTodo } from "components";
 import { useTodoListQuery } from "queries";
 
 export const Main = () => {
@@ -29,12 +30,7 @@ export const Main = () => {
     return (
       <Grid container spacing={2} mt={4}>
         <Grid item md xs={12}>
-          <Box display="flex">
-            <TextField fullWidth />
-            <Button sx={{ ml: 2, px: 4 }} variant="contained">
-              Add
-            </Button>
-          </Box>
+          <AddNewTodo />
           <List>
             {data?.map(({ id, description, status }) => (
               <ListItemButton key={id}>
