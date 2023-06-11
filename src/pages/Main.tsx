@@ -12,55 +12,59 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { useTodoListQuery } from "../queries";
 
-export const Main = () => (
-  <Container>
-    <Grid container spacing={2} mt={2}>
-      <Grid item xs>
-        <Typography variant="h4" component="h1">
-          Marvelous
-        </Typography>
-      </Grid>
-      <Grid item xs textAlign="right">
-        <Button variant="text" sx={{ textDecoration: "underline" }}>
-          Delete all tasks
-        </Button>
-      </Grid>
-    </Grid>
-    <Grid container spacing={2} mt={4}>
-      <Grid item md xs={12}>
-        <Box display="flex">
-          <TextField fullWidth />
-          <Button sx={{ ml: 2, px: 4 }} variant="contained">
-            Add
+export const Main = () => {
+  const { data } = useTodoListQuery();
+  return (
+    <Container>
+      <Grid container spacing={2} mt={2}>
+        <Grid item xs>
+          <Typography variant="h4" component="h1">
+            Marvelous
+          </Typography>
+        </Grid>
+        <Grid item xs textAlign="right">
+          <Button variant="text" sx={{ textDecoration: "underline" }}>
+            Delete all tasks
           </Button>
-        </Box>
-        <List>
-          {Array.from(Array(10).keys()).map((a) => (
-            <ListItemButton key={a}>
-              <ListItemIcon>
-                <Checkbox checked={false} disableRipple />
-              </ListItemIcon>
-              <ListItemText primary="List item" />
-            </ListItemButton>
-          ))}
-        </List>
+        </Grid>
       </Grid>
-      <Grid item md xs={12}>
-        <FormControl fullWidth>
-          <TextField label="Search..." />
-        </FormControl>
-        <List>
-          {Array.from(Array(10).keys()).map((a) => (
-            <ListItemButton key={a}>
-              <ListItemIcon>
-                <Checkbox checked disableRipple />
-              </ListItemIcon>
-              <ListItemText primary="List item" />
-            </ListItemButton>
-          ))}
-        </List>
+      <Grid container spacing={2} mt={4}>
+        <Grid item md xs={12}>
+          <Box display="flex">
+            <TextField fullWidth />
+            <Button sx={{ ml: 2, px: 4 }} variant="contained">
+              Add
+            </Button>
+          </Box>
+          <List>
+            {data?.map(({ id, description, status }) => (
+              <ListItemButton key={id}>
+                <ListItemIcon>
+                  <Checkbox checked={status} disableRipple />
+                </ListItemIcon>
+                <ListItemText primary={description} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Grid>
+        <Grid item md xs={12}>
+          <FormControl fullWidth>
+            <TextField label="Search..." />
+          </FormControl>
+          <List>
+            {data?.map(({ id, description, status }) => (
+              <ListItemButton key={id}>
+                <ListItemIcon>
+                  <Checkbox checked={status} disableRipple />
+                </ListItemIcon>
+                <ListItemText primary={description} />
+              </ListItemButton>
+            ))}
+          </List>
+        </Grid>
       </Grid>
-    </Grid>
-  </Container>
-);
+    </Container>
+  );
+};
