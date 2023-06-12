@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Main } from "pages/Main";
+import { SearchProvider } from "context";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,7 +14,9 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <Main />
+    <SearchProvider>
+      <Main />
+    </SearchProvider>
     <ReactQueryDevtools />
   </QueryClientProvider>
 );
