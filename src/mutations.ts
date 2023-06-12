@@ -61,7 +61,7 @@ export const useAddNewListItemMutation = (
       },
       onSettled: () => {
         queryClient.invalidateQueries({
-          queryKey: ["todo-list", "undone", search],
+          queryKey: ["todo-list", "undone"],
         });
       },
       ...options,
@@ -129,6 +129,14 @@ export const useDeleteAllTodosMutation = (
           ["todo-list", "done", search],
           context?.prevDone
         );
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["todo-list", "undone"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["todo-list", "done"],
+        });
       },
       ...options,
     }
@@ -216,6 +224,14 @@ export const useTodoUpdateMutation = () => {
           ["todo-list", "done", search],
           context?.prevDone
         );
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["todo-list", "undone"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["todo-list", "done"],
+        });
       },
     }
   );
