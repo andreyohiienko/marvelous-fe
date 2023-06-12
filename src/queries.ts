@@ -11,19 +11,19 @@ type TodoListItem = {
 };
 
 export const useTodoListQuery = (
-  options?: { status: "done" | "undone" } & UseQueryOptions<
+  options?: { status: "done" | "undone"; limit?: number } & UseQueryOptions<
     TodoListItem[],
     AxiosError,
     TodoListItem[]
   >
 ) => {
-  const { status, ...rest } = options || {};
+  const { status, limit, ...rest } = options || {};
   return useQuery<TodoListItem[], AxiosError, TodoListItem[]>(
     ["todo-list-" + status],
     async ({ signal }) => {
       const { data } = await api.get("/todo-list", {
         signal,
-        params: { status },
+        params: { status, limit },
       });
       return data;
     },

@@ -13,10 +13,11 @@ import { useTodoUpdateMutation } from "mutations";
 
 type Props = {
   listStatus: "done" | "undone";
+  limit?: number;
 };
 
-export const TodoList: FC<Props> = ({ listStatus }) => {
-  const { data, isLoading } = useTodoListQuery({ status: listStatus });
+export const TodoList: FC<Props> = ({ listStatus, limit }) => {
+  const { data, isLoading } = useTodoListQuery({ status: listStatus, limit });
   const { mutate } = useTodoUpdateMutation();
 
   if (isLoading)

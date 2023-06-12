@@ -29,7 +29,7 @@ export const Main = () => {
           <FormControl fullWidth>
             <TextField label="Search..." />
           </FormControl>
-          <TodoList listStatus="done" />
+          <TodoList listStatus="done" limit={10} />
         </Grid>
       </Grid>
     </Container>
