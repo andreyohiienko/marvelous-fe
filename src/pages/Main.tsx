@@ -25,6 +25,9 @@ export const Main = () => {
       <Grid container spacing={2} mt={4}>
         <Grid item md xs={12}>
           <AddNewTodo />
+          <Typography variant="h4" component="h4" mt={3}>
+            To Do
+          </Typography>
           <TodoList listStatus="undone" />
         </Grid>
         <Grid item md xs={12}>
@@ -35,6 +38,9 @@ export const Main = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </FormControl>
+          <Typography variant="h4" component="h4" mt={3}>
+            Done
+          </Typography>
           <TodoList listStatus="done" limit={10} />
         </Grid>
       </Grid>
