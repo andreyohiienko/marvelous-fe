@@ -23,13 +23,13 @@ export const Main = () => {
       <Grid container spacing={2} mt={4}>
         <Grid item md xs={12}>
           <AddNewTodo />
-          <TodoList status="undone" />
+          <TodoList listStatus="undone" />
         </Grid>
         <Grid item md xs={12}>
           <FormControl fullWidth>
             <TextField label="Search..." />
           </FormControl>
-          <TodoList status="done" />
+          <TodoList listStatus="done" />
         </Grid>
       </Grid>
     </Container>

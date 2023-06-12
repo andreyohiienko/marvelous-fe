@@ -9,13 +9,15 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useTodoListQuery } from "queries";
+import { useTodoUpdateMutation } from "mutations";
 
 type Props = {
-  status: "done" | "undone";
+  listStatus: "done" | "undone";
 };
 
-export const TodoList: FC<Props> = ({ status }) => {
-  const { data, isLoading } = useTodoListQuery({ status });
+export const TodoList: FC<Props> = ({ listStatus }) => {
+  const { data, isLoading } = useTodoListQuery({ status: listStatus });
+  const { mutate } = useTodoUpdateMutation();
 
   if (isLoading)
     return (
@@ -27,7 +29,10 @@ export const TodoList: FC<Props> = ({ status }) => {
   return (
     <List>
       {data?.map(({ id, description, status }) => (
-        <ListItemButton key={id}>
+        <ListItemButton
+          key={id}
+          onClick={() => mutate({ id, status: !status })}
+        >
           <ListItemIcon>
             <Checkbox checked={status} disableRipple />
           </ListItemIcon>
