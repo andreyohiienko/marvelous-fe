@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { api } from "api";
 import { AxiosError } from "axios";
+import { useSearch } from "context";
 
 type Params = {
   description: string;
@@ -26,6 +27,7 @@ export const useAddNewListItemMutation = (
     TodoListItem[]
   >
 ) => {
+  const [search] = useSearch();
   const queryClient = useQueryClient();
   return useMutation<TodoListItem[], AxiosError, Params, TodoListItem[]>(
     async (params: Params) => {
@@ -35,13 +37,17 @@ export const useAddNewListItemMutation = (
     {
       onMutate: (newTodo) => {
         const previousTodos = queryClient.getQueryData<TodoListItem[]>([
-          "todo-list-undone",
+          "todo-list",
+          "undone",
+          search,
         ]);
-        queryClient.setQueryData<TodoListItem[]>(["todo-list-undone"], (old) =>
-          [
-            ...(old || []),
-            { id: Math.random(), status: false, ...newTodo },
-          ].sort((a, b) => a.description?.localeCompare(b.description))
+        queryClient.setQueryData<TodoListItem[]>(
+          ["todo-list", "undone", search],
+          (old) =>
+            [
+              ...(old || []),
+              { id: Math.random(), status: false, ...newTodo },
+            ].sort((a, b) => a.description?.localeCompare(b.description))
         );
 
         return previousTodos;
@@ -49,12 +55,14 @@ export const useAddNewListItemMutation = (
       onError: (_err, _variables, context) => {
         if (context)
           queryClient.setQueryData<TodoListItem[]>(
-            ["todo-list-undone"],
+            ["todo-list", "undone", search],
             context
           );
       },
       onSettled: () => {
-        queryClient.invalidateQueries({ queryKey: ["todo-list"] });
+        queryClient.invalidateQueries({
+          queryKey: ["todo-list", "undone", search],
+        });
       },
       ...options,
     }
@@ -72,6 +80,7 @@ export const useDeleteAllTodosMutation = (
     }
   >
 ) => {
+  const [search] = useSearch();
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -90,27 +99,34 @@ export const useDeleteAllTodosMutation = (
     {
       onMutate: () => {
         const prevUndone = queryClient.getQueryData<TodoListItem[]>([
-          "todo-list-undone",
+          "todo-list",
+          "undone",
+          search,
         ]);
 
         const prevDone = queryClient.getQueryData<TodoListItem[]>([
-          "todo-list-done",
+          "todo-list",
+          "done",
+          search,
         ]);
         queryClient.setQueryData<TodoListItem[]>(
-          ["todo-list-undone"],
+          ["todo-list", "undone", search],
           () => []
         );
 
-        queryClient.setQueryData<TodoListItem[]>(["todo-list-done"], () => []);
+        queryClient.setQueryData<TodoListItem[]>(
+          ["todo-list", "done", search],
+          () => []
+        );
         return { prevDone, prevUndone };
       },
       onError: (_err, _variables, context) => {
         queryClient.setQueryData<TodoListItem[]>(
-          ["todo-list-undone"],
+          ["todo-list", "undone", search],
           context?.prevUndone
         );
         queryClient.setQueryData<TodoListItem[]>(
-          ["todo-list-done"],
+          ["todo-list", "done", search],
           context?.prevDone
         );
       },
@@ -125,6 +141,7 @@ type VariablesUpdate = {
 };
 
 export const useTodoUpdateMutation = () => {
+  const [search] = useSearch();
   const queryClient = useQueryClient();
 
   return useMutation<
@@ -143,24 +160,28 @@ export const useTodoUpdateMutation = () => {
     {
       onMutate: ({ id, status }) => {
         const prevUndone = queryClient.getQueryData<TodoListItem[]>([
-          `todo-list-undone`,
+          "todo-list",
+          "undone",
+          search,
         ]);
 
         const prevDone = queryClient.getQueryData<TodoListItem[]>([
-          `todo-list-done`,
+          "todo-list",
+          "done",
+          search,
         ]);
 
         if (status) {
           const doneTodo = prevUndone?.find((todo) => todo.id === id);
           const newUndoneTodos = prevUndone?.filter((todo) => todo.id !== id);
           queryClient.setQueryData<TodoListItem[]>(
-            [`todo-list-undone`],
+            ["todo-list", "undone", search],
             newUndoneTodos
           );
 
           if (doneTodo)
             queryClient.setQueryData<TodoListItem[]>(
-              [`todo-list-done`],
+              ["todo-list", "done", search],
               [{ ...doneTodo, status: true }, ...(prevDone || [])].sort(
                 (a, b) => a.description?.localeCompare(b.description)
               )
@@ -172,13 +193,13 @@ export const useTodoUpdateMutation = () => {
         const undoneTodo = prevDone?.find((todo) => todo.id === id);
         const newDoneTodos = prevDone?.filter((todo) => todo.id !== id);
         queryClient.setQueryData<TodoListItem[]>(
-          [`todo-list-done`],
+          ["todo-list", "done", search],
           newDoneTodos
         );
 
         if (undoneTodo)
           queryClient.setQueryData<TodoListItem[]>(
-            [`todo-list-undone`],
+            ["todo-list", "undone", search],
             [{ ...undoneTodo, status: false }, ...(prevUndone || [])].sort(
               (a, b) => a.description?.localeCompare(b.description)
             )
@@ -188,11 +209,11 @@ export const useTodoUpdateMutation = () => {
       },
       onError: (_err, _variables, context) => {
         queryClient.setQueryData<TodoListItem[]>(
-          ["todo-list-undone"],
+          ["todo-list", "undone", search],
           context?.prevUndone
         );
         queryClient.setQueryData<TodoListItem[]>(
-          ["todo-list-done"],
+          ["todo-list", "done", search],
           context?.prevDone
         );
       },

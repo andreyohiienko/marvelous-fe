@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { useTodoListQuery } from "queries";
 import { useTodoUpdateMutation } from "mutations";
+import { useSearch } from "context";
+import { useDebounce } from "hooks";
 
 type Props = {
   listStatus: "done" | "undone";
@@ -17,7 +19,14 @@ type Props = {
 };
 
 export const TodoList: FC<Props> = ({ listStatus, limit }) => {
-  const { data, isLoading } = useTodoListQuery({ status: listStatus, limit });
+  const [search] = useSearch();
+  const debouncedSearch = useDebounce(search);
+
+  const { data, isLoading } = useTodoListQuery({
+    status: listStatus,
+    limit,
+    search: debouncedSearch,
+  });
   const { mutate } = useTodoUpdateMutation();
 
   if (isLoading)
